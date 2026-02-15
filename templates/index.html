@@ -18,11 +18,12 @@
         <p>Advanced real-time crowd analytics and social density monitoring</p>
     </header>
 
-    <main class="dashboard">
+    <main class="dashboard" role="main">
         <section class="video-section">
             <div class="video-container">
                 <div class="video-inner">
-                    <img id="video-feed" src="{{ url_for('video_feed') }}" alt="Live Intelligence Feed">
+                    <img id="video-feed" src="{{ url_for('video_feed') }}" alt="Live Intelligence Feed"
+                        aria-live="polite">
                     <div class="live-badge">
                         <span class="live-dot"></span>
                         LIVE FEED
