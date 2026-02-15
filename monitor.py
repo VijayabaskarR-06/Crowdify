@@ -1,14 +1,21 @@
 import cv2
 import numpy as np
+import os
 from sklearn.cluster import DBSCAN
 
 class CrowdMonitor:
-    def __init__(self, model_proto='mobilenet/MobileNetSSD_deploy.prototxt', 
-                 model_weights='mobilenet/MobileNetSSD_deploy.caffemodel',
+    def __init__(self, model_proto=None, 
+                 model_weights=None,
                  alert_threshold=5, 
                  cluster_distance=75, 
                  cluster_size_threshold=3):
         
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        if model_proto is None:
+            model_proto = os.path.join(base_dir, 'mobilenet', 'MobileNetSSD_deploy.prototxt')
+        if model_weights is None:
+            model_weights = os.path.join(base_dir, 'mobilenet', 'MobileNetSSD_deploy.caffemodel')
+
         self.net = cv2.dnn.readNetFromCaffe(model_proto, model_weights)
         self.person_class_id = 15
         
