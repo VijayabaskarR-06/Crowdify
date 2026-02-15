@@ -45,6 +45,10 @@ header {
     padding: 3rem 1rem;
     text-align: center;
     animation: fadeInDown 0.8s ease-out;
+    background: hsla(229, 84%, 5%, 0.4);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2rem;
 }
 
 header h1 {
