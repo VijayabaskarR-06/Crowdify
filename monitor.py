@@ -89,9 +89,15 @@ class CrowdMonitor:
 
         return overlay
 
-    def get_stats(self):
+    @property
+    def is_crowded(self) -> bool:
+        return self.current_people_count >= self.alert_threshold
+
+    def get_stats(self) -> dict:
+        import datetime
         return {
             "people_count": self.current_people_count,
             "cluster_count": self.current_cluster_count,
-            "alert": self.current_people_count >= self.alert_threshold
+            "alert": self.is_crowded,
+            "timestamp": datetime.datetime.now().isoformat()
         }
