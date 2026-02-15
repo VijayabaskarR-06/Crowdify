@@ -42,8 +42,8 @@ class CrowdMonitor:
         self.net.setInput(blob)
         detections = self.net.forward()
 
-        people_centroids = []
-
+    def _calculate_centroids(self, detections: np.ndarray, h: int, w: int) -> list:
+        centroids = []
         for i in range(detections.shape[2]):
             confidence = detections[0, 0, i, 2]
             class_id = int(detections[0, 0, i, 1])
@@ -54,9 +54,8 @@ class CrowdMonitor:
                 cx, cy = int((x1 + x2) / 2), int((y1 + y2) / 2)
                 
                 if 0 <= cx < w and 0 <= cy < h:
-                    people_centroids.append([cx, cy])
-                    self.heatmap[cy, cx] += 0.5 
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), (57, 255, 20), 2)
+                    centroids.append([cx, cy])
+        return centroids
 
         self.current_people_count = len(people_centroids)
 
