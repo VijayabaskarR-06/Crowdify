@@ -37,10 +37,23 @@ class CrowdMonitor:
             self.h, self.w = frame.shape[:2]
             self.heatmap = np.zeros((self.h, self.w), dtype=np.float32)
 
-        h, w = self.h, self.w
-        blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)), 0.007843, (300, 300), 127.5)
-        self.net.setInput(blob)
-        detections = self.net.forward()
+        people_centroids = self._calculate_centroids(detections, h, w)
+        
+        for cx, cy in people_centroids:
+            self.heatmap[cy, cx] += 0.5
+            
+        self.current_people_count = len(people_centroids)
+
+        self.current_cluster_count = 0
+        if len(people_centroids) > 0:
+            people_np = np.array(people_centroids)
+            clustering = DBSCAN(eps=self.cluster_distance, min_samples=self.cluster_size_threshold).fit(people_np)
+            labels = clustering.labels_
+
+            unique_clusters = set(labels)
+            if -1 in unique_clusters:
+                unique_clusters.remove(-1)
+            self.current_cluster_count = len(unique_clusters)
 
     def _calculate_centroids(self, detections: np.ndarray, h: int, w: int) -> list:
         centroids = []
@@ -56,19 +69,6 @@ class CrowdMonitor:
                 if 0 <= cx < w and 0 <= cy < h:
                     centroids.append([cx, cy])
         return centroids
-
-        self.current_people_count = len(people_centroids)
-
-        self.current_cluster_count = 0
-        if len(people_centroids) > 0:
-            people_np = np.array(people_centroids)
-            clustering = DBSCAN(eps=self.cluster_distance, min_samples=self.cluster_size_threshold).fit(people_np)
-            labels = clustering.labels_
-
-            unique_clusters = set(labels)
-            if -1 in unique_clusters:
-                unique_clusters.remove(-1)
-            self.current_cluster_count = len(unique_clusters)
 
         heatmap_blur = cv2.GaussianBlur(self.heatmap, (51, 51), 0)
         heatmap_norm = cv2.normalize(heatmap_blur, None, 0, 255, cv2.NORM_MINMAX)
