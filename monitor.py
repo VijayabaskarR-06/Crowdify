@@ -4,11 +4,11 @@ import os
 from sklearn.cluster import DBSCAN
 
 class CrowdMonitor:
-    def __init__(self, model_proto=None, 
-                 model_weights=None,
-                 alert_threshold=5, 
-                 cluster_distance=75, 
-                 cluster_size_threshold=3):
+    def __init__(self, model_proto: str = None, 
+                 model_weights: str = None,
+                 alert_threshold: int = 5, 
+                 cluster_distance: int = 75, 
+                 cluster_size_threshold: int = 3):
         
         base_dir = os.path.dirname(os.path.abspath(__file__))
         if model_proto is None:
